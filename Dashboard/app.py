@@ -189,7 +189,7 @@ st.markdown(
     """
     <div class="header-wrap">
         <h1 style="margin-bottom:0;">My Spotify Content Based Recommendation Engine</h1>
-        <div class="header-sub">Pick a few songs you love ✨</div>
+        <div class="header-sub">pick a few songs you love ✨ get a pastel-coded, cosine-similarity powered playlist</div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -206,6 +206,25 @@ def load_models():
         tracks_df = joblib.load("models/tracks_df.pkl")
         similarity_matrix = joblib.load("models/similarity_matrix.pkl")
         track_lookup = joblib.load("models/track_lookup.pkl")
+
+        # Guard against rows with missing values (pandas stores these as
+        # NaN, a float) — mixing NaN with strings breaks sorted(),
+        # slicing, and other string ops used throughout the dashboard.
+        text_cols = ["artist_name", "track_name", "track_key", "playlists"]
+        for col in text_cols:
+            if col in tracks_df.columns:
+                tracks_df[col] = tracks_df[col].fillna("Unknown").astype(str)
+
+        numeric_cols = [
+            "preference_score", "play_count", "total_minutes_played",
+            "playlist_count", "days_since_last_play",
+        ]
+        for col in numeric_cols:
+            if col in tracks_df.columns:
+                tracks_df[col] = pd.to_numeric(tracks_df[col], errors="coerce").fillna(0)
+
+        if "in_library" in tracks_df.columns:
+            tracks_df["in_library"] = tracks_df["in_library"].fillna(False).astype(bool)
 
         return tracks_df, similarity_matrix, track_lookup
 
