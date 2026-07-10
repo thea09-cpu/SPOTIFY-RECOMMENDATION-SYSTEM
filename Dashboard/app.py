@@ -189,7 +189,7 @@ st.markdown(
     """
     <div class="header-wrap">
         <h1 style="margin-bottom:0;">My Spotify Content Based Recommendation Engine</h1>
-        <div class="header-sub">pick a few songs you love ✨ get a pastel-coded, cosine-similarity powered playlist</div>
+        <div class="header-sub">Pick a few songs you love ✨</div>
     </div>
     """,
     unsafe_allow_html=True,
