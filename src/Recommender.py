@@ -6,6 +6,7 @@ Author: Cynthia Mueni
 Project: Spotify SRecommendation System
 """
 
+import numpy as np
 import pandas as pd
 
 
@@ -57,7 +58,7 @@ class ContentBasedRecommender:
     # Popularity-Based Recommender (Baseline)
     # ============================================================
 
-    def popularity_recommendations(self, top_n=10):
+    def popularity_recommendations(self, top_n=10, candidate_df=None):
         """
         Recommend the most preferred songs.
 
@@ -65,13 +66,19 @@ class ContentBasedRecommender:
         ----------
         top_n : int
 
+        candidate_df : pandas.DataFrame, optional
+            A pre-filtered subset of tracks_df to rank instead of the
+            full dataset (used to apply sidebar filters).
+
         Returns
         -------
         pandas.DataFrame
         """
 
+        base = candidate_df if candidate_df is not None else self.tracks_df
+
         recommendations = (
-            self.tracks_df
+            base
             .sort_values(
                 by="preference_score",
                 ascending=False
@@ -88,7 +95,8 @@ class ContentBasedRecommender:
 
         return recommendations[
             [
-                "Rank"
+                "Rank",
+                "track_key",
                 "track_name",
                 "artist_name",
                 "preference_score",
@@ -103,39 +111,54 @@ class ContentBasedRecommender:
     # Content-Based Recommender
     # ============================================================
 
-    def content_recommendations(self, track_key, top_n=10):
+    def content_recommendations(self, track_key, top_n=10, candidate_indices=None):
         """
-        Recommend songs similar to a selected track.
+        Recommend songs similar to one or more selected tracks.
 
         Parameters
         ----------
-        track_key : str
+        track_key : str or list of str
+            A single seed track, or several seed tracks. When several are
+            given, their similarity scores are averaged so the
+            recommendations reflect all of the seeds together.
 
         top_n : int
+
+        candidate_indices : iterable of int, optional
+            Restrict recommendations to these row positions in
+            `tracks_df` (used to apply sidebar filters before ranking).
+            If None, every track is eligible.
 
         Returns
         -------
         pandas.DataFrame
         """
 
-        if track_key not in self.track_lookup.index:
-            raise ValueError(f"'{track_key}' not found.")
+        seed_keys = [track_key] if isinstance(track_key, str) else list(track_key)
 
-        idx = self.track_lookup[track_key]
+        missing = [k for k in seed_keys if k not in self.track_lookup.index]
+        if missing:
+            raise ValueError(f"Track(s) not found: {missing}")
 
-        similarity_scores = list(
-            enumerate(
-                self.similarity_matrix[idx]
-            )
+        seed_indices = [self.track_lookup[k] for k in seed_keys]
+
+        # Average similarity across all seed songs
+        combined_scores = np.mean(
+            [self.similarity_matrix[idx] for idx in seed_indices],
+            axis=0
         )
+
+        eligible = (
+            set(candidate_indices) if candidate_indices is not None
+            else set(range(len(self.tracks_df)))
+        )
+        eligible -= set(seed_indices)
 
         similarity_scores = sorted(
-            similarity_scores,
+            ((i, combined_scores[i]) for i in eligible),
             key=lambda x: x[1],
             reverse=True
-        )
-
-        similarity_scores = similarity_scores[1:top_n + 1]
+        )[:top_n]
 
         recommended_indices = [
             i[0] for i in similarity_scores
@@ -164,7 +187,8 @@ class ContentBasedRecommender:
 
         return recommendations[
             [
-                "Rank"
+                "Rank",
+                "track_key",
                 "track_name",
                 "artist_name",
                 "similarity_score",
@@ -205,7 +229,9 @@ class ContentBasedRecommender:
     def recommend(self,
                   method="content",
                   track_key=None,
-                  top_n=10):
+                  top_n=10,
+                  candidate_df=None,
+                  candidate_indices=None):
         """
         Generate recommendations.
 
@@ -216,15 +242,23 @@ class ContentBasedRecommender:
             "content"
             "popularity"
 
-        track_key : str
+        track_key : str or list of str
+            One or more seed tracks (content-based only).
 
         top_n : int
+
+        candidate_df : pandas.DataFrame, optional
+            Pre-filtered subset to rank (popularity method).
+
+        candidate_indices : iterable of int, optional
+            Pre-filtered row positions to restrict recommendations to
+            (content method).
         """
 
         method = method.lower()
 
         if method == "popularity":
-            return self.popularity_recommendations(top_n)
+            return self.popularity_recommendations(top_n, candidate_df=candidate_df)
 
         elif method == "content":
 
@@ -235,7 +269,8 @@ class ContentBasedRecommender:
 
             return self.content_recommendations(
                 track_key,
-                top_n
+                top_n,
+                candidate_indices=candidate_indices
             )
 
         else:

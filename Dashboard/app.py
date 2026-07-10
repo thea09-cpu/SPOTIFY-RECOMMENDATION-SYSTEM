@@ -22,6 +22,17 @@ import plotly.express as px
 import streamlit as st
 
 import joblib
+import sys
+from pathlib import Path
+
+# Streamlit Cloud runs this file as Dashboard/app.py, which only puts the
+# Dashboard/ folder on sys.path — not the repo root. src/ lives next to
+# Dashboard/, not inside it, so it has to be added manually or the import
+# below fails with "ModuleNotFoundError: No module named 'src'".
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.append(str(REPO_ROOT))
+
 from src.Recommender import ContentBasedRecommender
 
 # ============================================================
