@@ -56,7 +56,7 @@ CARD = "#1e1e46"
 
 CUSTOM_CSS = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Poppins:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Nunito:wght@400;600;700&display=swap');
 
 /* ---------- App background ---------- */
 .stApp {{
@@ -79,7 +79,7 @@ section[data-testid="stSidebar"] * {{
 
 /* ---------- Headings ---------- */
 h1, h2, h3, .cute-title {{
-    font-family: 'Baloo 2', cursive !important;
+    font-family: 'Baloo 2', 'Poppins', cursive !important;
     letter-spacing: 0.3px;
 }}
 
@@ -97,7 +97,7 @@ h3 {{ color: {LILAC} !important; }}
     box-shadow: 0 0 18px rgba(203,184,245,0.08);
 }}
 .kpi-label {{
-    font-family: 'Inter', sans-serif;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.78rem;
     color: #B9B9E0;
     text-transform: uppercase;
@@ -116,7 +116,7 @@ h3 {{ color: {LILAC} !important; }}
     display: inline-block;
     padding: 3px 10px;
     border-radius: 999px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif !important;
     font-size: 0.72rem;
     font-weight: 600;
     background: rgba(255,182,217,0.15);
@@ -130,7 +130,7 @@ h3 {{ color: {LILAC} !important; }}
     padding: 10px 0 6px 0;
 }}
 .header-sub {{
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif !important;
     color: #B9B9E0;
     font-size: 0.95rem;
     margin-top: -6px;
@@ -307,8 +307,8 @@ seed_songs = st.multiselect(
 )
 st.caption(f"🎵 {len(tracks_df):,} tracks available")
 
-col_a, col_b = st.columns([1, 4])
-with col_a:
+col1, col2, col3 = st.columns([1,2,1])
+with col2:
     go_btn = st.button("✨ Get recommendations")
 
 # ============================================================
