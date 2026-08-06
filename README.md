@@ -1,6 +1,6 @@
 # 🎧 Spotify Recommendation System
 
-A personal, content-based music recommender built entirely from my own exported Spotify listening history — streaming history, saved library, and playlists. It engineers listening-behavior features (play count, minutes played, recency, playlist membership, artist affinity), computes cosine similarity between tracks, and serves recommendations through an interactive Streamlit dashboard.
+An end-to-end **content-based music recommendation system** built from my own exported Spotify listening history, including streaming history, saved library, and playlists. The project covers **data cleaning, exploratory data analysis (EDA), feature engineering, machine learning using cosine similarity**, and an interactive **Streamlit dashboard** that delivers personalized song recommendations based on listening behavior rather than genre alone.
 
 ---
 
@@ -49,6 +49,8 @@ Spotify-Recommendation-System/
 │   ├── 02_EDA.ipynb                  # Exploratory analysis of listening behavior
 │   └── 03_Recommendation_Engine.ipynb # Feature engineering, similarity matrix, model export
 │
+├── Screenshot/
+│   └── Dashboard.png
 ├── src/
 │   ├── __init__.py
 │   └── Recommender.py                # ContentBasedRecommender class (used by the dashboard)
