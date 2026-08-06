@@ -116,4 +116,6 @@ streamlit run Dashboard/app.py
 
 ## 👤 Author
 
-Built by Cynthia Mueni — BSc Data Science and Analytics student, JKUAT.
+Built by Cynthia Mueni — Aspiring Data Scientist.
+Github Profile:https://github.com/thea09-cpu
+
