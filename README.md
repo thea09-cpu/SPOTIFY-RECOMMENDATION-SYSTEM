@@ -51,6 +51,7 @@ Spotify-Recommendation-System/
 │
 ├── Screenshot/
 │   └── Dashboard.png
+|
 ├── src/
 │   ├── __init__.py
 │   └── Recommender.py                # ContentBasedRecommender class (used by the dashboard)
